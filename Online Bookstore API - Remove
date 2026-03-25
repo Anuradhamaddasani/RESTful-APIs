@@ -1,0 +1,85 @@
+################### book controller.cs
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using OnlineBookstore.Interface;
+using OnlineBookstore.Models;
+
+namespace OnlineBookstore.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class BookController : ControllerBase
+    {
+         //Implement the code here
+         private readonly IBookRepository _bookRepository;
+ 
+public BookController(IBookRepository bookRepository)
+{
+    _bookRepository = bookRepository;
+}
+ 
+[HttpDelete("DeleteBook/{id}")]
+public IActionResult Delete([FromRoute] int id)
+{
+    var book = _bookRepository.DeleteBook(id);
+    if (!book)
+    {
+        return NotFound();
+    }
+ 
+    return Ok(book);
+}
+    }
+}
+
+
+
+##############  IBookRepository
+using OnlineBookstore.Models;
+
+namespace OnlineBookstore.Interface
+{
+    public interface IBookRepository
+    {
+         //Implement the code here
+         bool DeleteBook(int id);
+    }
+}
+
+
+############# book.cs
+
+namespace OnlineBookstore.Models
+{
+    public class Book
+    {
+         //Implement the code here
+         public int Id {get; set;}
+         public string Title {get; set;}
+         public string Author {get; set;}
+        public double Price {get; set;}
+    }
+}
+
+
+
+########## BookRepository.cs
+using OnlineBookstore.Interface;
+using OnlineBookstore.Models;
+
+namespace OnlineBookstore.Repository
+{
+    public class BookRepository:IBookRepository
+    {
+        //Implement the code here
+        public bool DeleteBook(int id){
+            var bookToRemove = StaticData.IsBooks.FirstOrDefault(b => b.Id==id);
+            if(bookToRemove != null){
+                StaticData.IsBooks.Remove(bookToRemove);
+                return true;
+            }
+            return false;
+        }
+    }
+}
+
