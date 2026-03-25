@@ -1,0 +1,97 @@
+###########book controller
+
+
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using OnlineBookstore.Interface;
+using OnlineBookstore.Models;
+
+namespace OnlineBookstore.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class BookController : ControllerBase
+    {
+         //Implement the code here
+    private readonly IBookRepository _bookRepository;
+ 
+    public BookController(IBookRepository bookRepository)
+    {
+        _bookRepository = bookRepository;
+    }
+ 
+    [HttpGet("GetAllBooks")]
+    public ActionResult<List<Book>> GetAll()
+    {
+        var books = _bookRepository.GetAllBooks();
+        return Ok(books);
+    }
+ 
+    [HttpGet("GetBookById/{id}")]
+    public ActionResult<Book> GetById([FromRoute] int id)
+    {
+        var book = _bookRepository.GetBookById(id);
+        if (book == null)
+        {
+            return NotFound();
+        }
+        return Ok(book);
+    }
+}
+}
+
+
+#############IBookRepository
+
+using OnlineBookstore.Models;
+namespace OnlineBookstore.Interface
+{
+    public interface IBookRepository
+    {
+         //Implement the code here
+         
+             List<Book> GetAllBooks();
+             Book GetBookById(int id);
+         }
+    
+}
+
+
+###########book.cs
+namespace OnlineBookstore.Models
+{
+    public class Book
+    {
+         //Implement the code here
+         public int Id {get; set;}
+         public string Title {get; set;}
+         public string Author {get; set;}
+        public double Price {get; set;}
+    }
+}
+
+
+##########BookRepository
+
+using OnlineBookstore.Interface;
+using OnlineBookstore.Models;
+
+namespace OnlineBookstore.Repository
+{
+    
+        //Implement the code here
+        public class BookRepository: IBookRepository
+{
+    public List<Book> GetAllBooks()
+    {
+        return StaticData.IsBooks;
+    }
+ 
+    public Book GetBookById(int id)
+    {
+        return StaticData.IsBooks.FirstOrDefault(b => b.Id == id);
+    }
+}
+    }
+
+
